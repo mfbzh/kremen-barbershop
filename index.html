@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Барбершоп «Кремень» · стрижки, борода и бритьё в Москве</title>
+<meta name="description" content="Мужские стрижки, фейды, моделирование бороды и бритьё опасной бритвой. Запись онлайн в Telegram за минуту, без звонков.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Барбершоп «Кремень»">
+<meta property="og:description" content="Стрижки, борода и бритьё. Запись в Telegram за минуту.">
+<meta name="theme-color" content="#0d2620">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230d2620'/%3E%3CclipPath id='c'%3E%3Crect x='11' y='5' width='10' height='22' rx='5'/%3E%3C/clipPath%3E%3Cg clip-path='url(%23c)'%3E%3Crect x='11' y='5' width='10' height='22' fill='%23efe7d6'/%3E%3Cpath d='M4 15 28 3M4 23 28 11M4 31 28 19M4 39 28 27' stroke='%23b8382c' stroke-width='4'/%3E%3C/g%3E%3Crect x='9' y='3' width='14' height='4' rx='2' fill='%23d9b56b'/%3E%3Crect x='9' y='25' width='14' height='4' rx='2' fill='%23d9b56b'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&family=Prata&display=swap">
+<style>
+  /* Витрина барбершопа: золочёная вывеска и вращающийся столб слева, экран бота справа;
+     ниже прайс-доска с отточиями, мастера в арочных зеркалах, контакты. Один тёмный образ. */
+  :root {
+    --bottle: #0d2620;      /* фон: бутылочно-зелёный, как кожа кресел и кафель */
+    --bottle-2: #12312a;    /* поверхности */
+    --bottle-3: #1a4136;    /* приподнятые элементы */
+    --ink: #0a1d18;         /* самый глубокий тон: экран телефона */
+    --cream: #efe7d6;       /* основной текст */
+    --sage: #a6b8aa;        /* второстепенный текст */
+    --gold: #d9b56b;        /* сусальное золото вывески */
+    --gold-hi: #f4dfa6;
+    --gold-lo: #94723a;
+    --pole-red: #b8382c;    /* красная полоса барберского столба */
+    --open: #8fd6a6;
+    --line: rgba(239, 231, 214, 0.13);
+    --line-gold: rgba(217, 181, 107, 0.4);
+    --shade: rgba(0, 0, 0, 0.42);
+
+    --font-display: "Prata", "Didot", "Bodoni MT", Georgia, serif;
+    --font-body: "Golos Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+    --step--1: 14px;
+    --step-0: 17px;
+    --step-1: 21px;
+    --step-2: clamp(24px, 2.6vw, 28px);
+    --step-3: clamp(34px, 5vw, 54px);
+    --gutter-l: max(20px, env(safe-area-inset-left, 0px));
+    --gutter-r: max(20px, env(safe-area-inset-right, 0px));
+    color-scheme: dark;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 84px; -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bottle);
+    color: var(--cream);
+    font-family: var(--font-body);
+    font-size: var(--step-0);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0 0 auto;
+    height: env(safe-area-inset-top, 0px);
+    z-index: 60;
+    background: var(--bottle);
+  }
+  img { max-width: 100%; display: block; }
+  a { color: inherit; }
+  h1, h2, h3 { text-wrap: balance; }
+  :focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; border-radius: 4px; }
+
+  .wrap { max-width: 1180px; margin-inline: auto; padding-left: var(--gutter-l); padding-right: var(--gutter-r); }
+  .skip { position: absolute; left: 16px; top: -60px; z-index: 100; padding: 10px 16px; background: var(--gold); color: var(--bottle); border-radius: 4px; }
+  .skip:focus { top: 16px; }
+
+  /* Золото вывески */
+  .gilt {
+    background: linear-gradient(180deg, var(--gold-hi) 0%, var(--gold) 38%, var(--gold-lo) 52%, var(--gold) 68%, var(--gold-hi) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 2px 0 var(--shade));
+  }
+
+  /* Кнопки */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 15px 26px;
+    border: 1px solid var(--gold);
+    border-radius: 6px;
+    background: var(--gold);
+    color: var(--bottle);
+    font: 600 16px/1.2 var(--font-body);
+    text-decoration: none;
+    transition: background-color .2s, border-color .2s, transform .1s;
+  }
+  .btn:hover { background: var(--gold-hi); border-color: var(--gold-hi); }
+  .btn:active { transform: translateY(1px); }
+  .btn svg { width: 19px; height: 19px; flex: none; }
+  .btn--ghost { background: transparent; color: var(--cream); border-color: var(--line-gold); }
+  .btn--ghost:hover { background: var(--bottle-3); border-color: var(--gold); }
+  .btn--sm { padding: 10px 16px; font-size: 15px; }
+
+  /* Шапка */
+  .top {
+    position: sticky;
+    top: env(safe-area-inset-top, 0px);
+    z-index: 50;
+    background: color-mix(in srgb, var(--bottle) 90%, transparent);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .top__in { display: flex; align-items: center; gap: 28px; min-height: 68px; }
+  .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+  .logo__mark {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 36px;
+    padding-top: 3px;
+    border: 1.5px solid var(--gold);
+    border-radius: 15px 15px 3px 3px;
+    color: var(--gold);
+    font: 18px/1 var(--font-display);
+  }
+  .logo__name { font: 21px/1 var(--font-display); letter-spacing: .08em; text-transform: uppercase; color: var(--gold); }
+  .nav { display: flex; gap: 28px; margin-left: auto; font-size: 15px; }
+  .nav a { color: var(--sage); text-decoration: none; transition: color .2s; }
+  .nav a:hover { color: var(--cream); }
+
+  /* Первый экран */
+  .hero { position: relative; overflow: hidden; border-bottom: 1px solid var(--line); }
+  .hero::before {
+    content: "";
+    position: absolute;
+    top: -30%;
+    right: -12%;
+    width: 70%;
+    height: 150%;
+    background: radial-gradient(closest-side, color-mix(in srgb, var(--gold) 11%, transparent), transparent);
+    pointer-events: none;
+  }
+  .hero__in {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) auto minmax(0, .85fr);
+    align-items: center;
+    gap: 56px;
+    padding-block: 72px 88px;
+  }
+  .hero__text { min-width: 0; }
+  .brand { display: inline-block; max-width: 100%; }
+  .hero__title { margin: 0; font-weight: 400; }
+  .hero__kicker {
+    display: block;
+    margin-bottom: 10px;
+    color: var(--sage);
+    font: 600 13px/1.2 var(--font-body);
+    letter-spacing: .26em;
+    text-transform: uppercase;
+  }
+  .sign {
+    display: block;
+    font: 400 clamp(52px, 16vw, 104px)/1 var(--font-display);
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    padding-bottom: 4px;
+  }
+  .sign-rule {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 16px 0 0;
+    color: var(--gold);
+    font: 600 13px/1 var(--font-body);
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .sign-rule::before, .sign-rule::after { content: ""; flex: 1; min-width: 12px; height: 1px; background: var(--line-gold); }
+  .hero__lead { max-width: 34em; margin: 32px 0 0; font-size: 19px; line-height: 1.55; }
+  .hero__place { margin: 12px 0 0; color: var(--sage); font-size: 15px; }
+  .hero__cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+  .status { display: flex; align-items: center; gap: 10px; margin: 24px 0 0; color: var(--sage); font-size: 15px; font-variant-numeric: tabular-nums; }
+  .status::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--sage); flex: none; }
+  .status.is-open { color: var(--cream); }
+  .status.is-open::before { background: var(--open); box-shadow: 0 0 0 4px color-mix(in srgb, var(--open) 22%, transparent); }
+
+  /* Барберский столб */
+  .pole {
+    position: relative;
+    align-self: stretch;
+    width: 22px;
+    margin-block: 34px;
+    border-radius: 11px;
+    background: repeating-linear-gradient(-60deg, var(--pole-red) 0 15px, var(--cream) 15px 30px);
+    background-size: 100% 60px;
+    box-shadow: inset -6px 0 8px var(--shade), inset 4px 0 5px rgba(255, 255, 255, .3);
+    animation: pole 3s linear infinite;
+  }
+  .pole::before, .pole::after {
+    content: "";
+    position: absolute;
+    left: -6px;
+    right: -6px;
+    height: 18px;
+    border-radius: 9px;
+    background: linear-gradient(90deg, var(--gold-lo), var(--gold-hi) 45%, var(--gold-lo));
+  }
+  .pole::before { top: -16px; }
+  .pole::after { bottom: -16px; }
+  @keyframes pole { to { background-position: 0 60px; } }
+
+  /* Макет переписки с ботом */
+  .demo { margin: 0; justify-self: end; width: 100%; max-width: 400px; }
+  .tg {
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 26px;
+    background: var(--ink);
+    box-shadow: 0 34px 60px -24px var(--shade);
+    font-size: 15px;
+    line-height: 1.45;
+  }
+  .tg__head { display: flex; align-items: center; gap: 12px; padding: 14px 18px; background: var(--bottle-2); border-bottom: 1px solid var(--line); }
+  .tg__ava { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--gold); color: var(--bottle); font: 19px/1 var(--font-display); flex: none; }
+  .tg__head b { display: block; font-weight: 600; }
+  .tg__head small { color: var(--sage); font-size: 13px; }
+  .tg__body { display: flex; flex-direction: column; gap: 6px; padding: 16px 14px; }
+  .msg {
+    align-self: flex-start;
+    max-width: 92%;
+    margin: 4px 0 0;
+    padding: 9px 13px 10px;
+    border-radius: 16px 16px 16px 6px;
+    background: var(--bottle-3);
+  }
+  .msg:first-child { margin-top: 0; }
+  .kb { display: grid; grid-template-columns: repeat(var(--kb-cols, 4), minmax(0, 1fr)); gap: 5px; width: 92%; }
+  .kb span {
+    padding: 6px 0;
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--cream) 9%, transparent);
+    text-align: center;
+    font-size: 14px;
+    font-variant-numeric: tabular-nums;
+  }
+  .kb .is-on { background: var(--gold); color: var(--bottle); font-weight: 600; }
+  .kb .kb__wide { grid-column: 1 / -1; }
+  .tg__input { margin: 0 14px 14px; padding: 10px 16px; border-radius: 999px; background: var(--bottle-2); color: var(--sage); font-size: 14px; }
+  .demo figcaption { margin-top: 14px; color: var(--sage); font-size: var(--step--1); text-align: center; }
+
+  /* Секции */
+  .section { padding-block: 104px; border-bottom: 1px solid var(--line); }
+  .section__head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: end;
+    gap: 16px 56px;
+    margin-bottom: 44px;
+  }
+  .section__head p { max-width: 36em; margin: 0; color: var(--sage); }
+  h2 { margin: 0; font: 400 var(--step-3)/1.08 var(--font-display); letter-spacing: .01em; }
+
+  /* Прайс-доска */
+  .board {
+    position: relative;
+    padding: 12px 44px;
+    border: 1px solid var(--line-gold);
+    border-radius: 4px;
+    background: var(--bottle-2);
+  }
+  .board::before {
+    content: "";
+    position: absolute;
+    inset: 6px;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    pointer-events: none;
+  }
+  .board__list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 72px; margin: 0; padding: 0; list-style: none; }
+  .svc { padding-block: 30px; border-top: 1px solid var(--line); }
+  .svc:nth-child(-n + 2) { border-top: 0; }
+  /* Если название не помещается рядом с ценой, цена с отточием переносится на свою строку */
+  .svc__head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 12px; }
+  .svc__name { flex: 0 1 auto; min-width: 0; margin: 0; font: 400 var(--step-2)/1.2 var(--font-display); }
+  .svc__cost {
+    display: flex;
+    flex: 1 0 8.5em;
+    align-items: baseline;
+    gap: 12px;
+    margin: 0;
+    color: var(--gold);
+    font-size: var(--step-1);
+    font-weight: 600;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+  .svc__dots { flex: 1; min-width: 20px; border-bottom: 2px dotted var(--line-gold); transform: translateY(-5px); }
+  .svc__desc { max-width: 34em; margin: 10px 0 0; color: var(--sage); font-size: 16px; }
+  .svc__foot { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; margin-top: 16px; font-size: var(--step--1); }
+  .svc__time { padding: 2px 9px; border: 1px solid var(--line); border-radius: 3px; font-variant-numeric: tabular-nums; }
+  .svc__note { color: var(--gold); }
+  .svc__book, .master__book { color: var(--gold); font-weight: 600; text-decoration: none; text-underline-offset: 4px; }
+  .svc__book { margin-left: auto; }
+  .svc__book:hover, .master__book:hover { text-decoration: underline; }
+  .board__foot { margin: 22px 0 0; color: var(--sage); font-size: 15px; }
+
+  /* Мастера */
+  .masters { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 36px; margin: 0; padding: 0; list-style: none; }
+  .master { display: flex; flex-direction: column; gap: 22px; }
+  .master__frame {
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    aspect-ratio: 1 / 1;
+    max-width: 100%;
+    border: 1px solid var(--line-gold);
+    border-radius: 999px 999px 6px 6px;
+    background: radial-gradient(circle at 50% 38%, var(--bottle-3), var(--bottle-2) 70%);
+  }
+  .master__frame img { width: 100%; height: 100%; object-fit: cover; }
+  .master__frame .gilt { font: 400 clamp(84px, 11vw, 136px)/1 var(--font-display); padding-top: .12em; }
+  .master__text { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+  .master__name { margin: 0; font: 400 30px/1.15 var(--font-display); }
+  .master__role { margin: 0; color: var(--gold); font-size: 13px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; }
+  .master__about { margin: 4px 0 6px; color: var(--sage); }
+  .master__facts { margin: -2px 0 6px; color: var(--cream); font-size: 15px; }
+
+  /* Как записаться */
+  .steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px; margin: 0; padding: 0; list-style: none; }
+  .steps li { padding-top: 26px; border-top: 1px solid var(--line-gold); }
+  .steps__n { display: block; font: 400 56px/1 var(--font-display); letter-spacing: .04em; }
+  .steps h3 { margin: 18px 0 8px; font: 400 var(--step-2)/1.2 var(--font-display); }
+  .steps p { max-width: 30em; margin: 0; color: var(--sage); }
+
+  /* Контакты */
+  .contacts { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 56px; }
+  .contacts__addr { margin: 28px 0 0; font: 400 clamp(26px, 3.4vw, 36px)/1.2 var(--font-display); }
+  .contacts__note { margin: 8px 0 0; color: var(--sage); }
+  .contacts__phone { display: inline-block; margin-top: 22px; font-size: 22px; font-weight: 600; text-decoration: none; font-variant-numeric: tabular-nums; }
+  .contacts__phone:hover { color: var(--gold); }
+  .contacts__actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+  .hours-title { margin: 6px 0 14px; color: var(--gold); font-size: 13px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; }
+  .hours { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+  .hours th, .hours td { padding: 13px 0; border-bottom: 1px solid var(--line); font-weight: 400; text-align: left; }
+  .hours td { text-align: right; }
+  .hours tr.is-today th, .hours tr.is-today td { color: var(--gold); font-weight: 600; }
+  .hours tr.is-today th::after { content: " · сегодня"; color: var(--sage); font-weight: 400; }
+  .hours-note { margin: 14px 0 0; color: var(--sage); font-size: 15px; }
+  .contacts__tg { margin: 10px 0 0; color: var(--sage); }
+  .contacts__tg a { color: var(--gold); text-decoration: none; }
+  .contacts__tg a:hover { text-decoration: underline; }
+
+  /* Финальный призыв */
+  .cta { background: var(--bottle-2); }
+  .cta::before { content: ""; display: block; height: 8px; background: repeating-linear-gradient(-60deg, var(--pole-red) 0 12px, var(--cream) 12px 24px); }
+  .cta__in { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 24px 40px; padding-block: 72px; }
+  .cta__title { max-width: 16em; margin: 0; font: 400 clamp(30px, 4.4vw, 46px)/1.15 var(--font-display); }
+
+  .foot { padding-block: 32px; color: var(--sage); font-size: var(--step--1); }
+  .foot__in { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 32px; }
+  .foot p { margin: 0; }
+
+  /* Кнопка записи, прилипающая к низу экрана на телефоне */
+  .dock { display: none; }
+
+  @media (max-width: 1040px) {
+    .hero__in { grid-template-columns: minmax(0, 1fr); gap: 48px; padding-block: 56px 72px; }
+    .pole { display: none; }
+    .demo { justify-self: start; }
+  }
+  @media (max-width: 860px) {
+    .nav { display: none; }
+    .top .btn--sm { margin-left: auto; }
+    .section { padding-block: 72px; }
+    .section__head { grid-template-columns: minmax(0, 1fr); margin-bottom: 32px; }
+    .board { padding: 4px 24px; }
+    .board__list { grid-template-columns: minmax(0, 1fr); }
+    .svc:nth-child(2) { border-top: 1px solid var(--line); }
+    .masters { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+    .master { flex-direction: row; align-items: center; }
+    .master__frame { width: 128px; flex: none; }
+    .master__frame .gilt { font-size: 64px; }
+    .steps { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+    .contacts { grid-template-columns: minmax(0, 1fr); gap: 40px; }
+  }
+  @media (max-width: 720px) {
+    .top .btn--sm { display: none; }
+    .dock {
+      display: block;
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 40;
+      padding: 12px var(--gutter-r) calc(12px + env(safe-area-inset-bottom, 0px)) var(--gutter-l);
+      background: color-mix(in srgb, var(--bottle) 92%, transparent);
+      -webkit-backdrop-filter: blur(8px);
+      backdrop-filter: blur(8px);
+      border-top: 1px solid var(--line);
+      transition: transform .25s ease;
+    }
+    .dock.is-hidden { transform: translateY(110%); }
+    .dock .btn { width: 100%; }
+    .foot { padding-bottom: calc(110px + env(safe-area-inset-bottom, 0px)); }
+  }
+  @media (max-width: 480px) {
+    body { font-size: 16px; }
+    .hero__lead { font-size: 17px; }
+    .sign-rule { gap: 10px; font-size: 11px; letter-spacing: .16em; }
+    .hero__cta .btn { flex: 1 1 100%; }
+    .board { padding: 4px 18px; }
+    .svc__name { font-size: 21px; }
+    .svc__cost { font-size: 19px; }
+    .master { align-items: flex-start; gap: 18px; }
+    .master__frame { width: 96px; }
+    .master__frame .gilt { font-size: 50px; }
+    .master__name { font-size: 26px; }
+    .cta__in { padding-block: 56px; }
+    .cta .btn { width: 100%; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .pole { animation: none; }
+    .dock { transition: none; }
+  }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-tg" viewBox="0 0 24 24"><path fill="currentColor" d="M21.4 3.6 2.9 10.8c-1.3.5-1.2 1.3-.2 1.6l4.7 1.5 1.8 5.6c.2.6.4.9.9.9.4 0 .6-.2.9-.4l2.3-2.2 4.7 3.5c.9.5 1.5.2 1.7-.8l3.1-14.7c.3-1.3-.5-1.9-1.4-1.5ZM9.5 14.2l-.4 4.1-1.4-4.5 10.6-6.7-8.8 7.1Z"/></symbol>
+</svg>
+<a class="skip" href="#services">Перейти к ценам</a>
+
+<header class="top">
+  <div class="wrap top__in">
+    <a class="logo" href="#top" aria-label="Барбершоп «Кремень», в начало страницы">
+      <span class="logo__mark" aria-hidden="true">К</span>
+      <span class="logo__name">Кремень</span>
+    </a>
+    <nav class="nav" aria-label="Разделы сайта">
+      <a href="#services">Услуги и цены</a>
+      <a href="#masters">Мастера</a>
+      <a href="#how">Как записаться</a>
+      <a href="#contacts">Контакты</a>
+    </nav>
+    <a class="btn btn--sm" href="https://t.me/ClientassBot?start=site">
+      <svg aria-hidden="true"><use href="#i-tg"/></svg>Записаться
+    </a>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="wrap hero__in">
+      <div class="hero__text">
+        <div class="brand">
+          <h1 class="hero__title">
+            <span class="hero__kicker">Барбершоп</span>
+            <span class="sign gilt">Кремень</span>
+          </h1>
+          <p class="sign-rule"><!--shop:tagline-->Стрижки · Борода · Бритьё<!--/shop:tagline--></p>
+        </div>
+        <p class="hero__lead">Стрижём машинкой и ножницами, моделируем бороду и бреем опасной бритвой. Записаться можно в Telegram за минуту, без звонков и ожидания ответа.</p>
+        <p class="hero__place"><!--shop:city-->Москва<!--/shop:city-->, <!--shop:address-->ул. Мастеровая, 14<!--/shop:address--></p>
+        <div class="hero__cta" id="hero-cta">
+          <a class="btn" href="https://t.me/ClientassBot?start=site">
+            <svg aria-hidden="true"><use href="#i-tg"/></svg>Записаться в Telegram
+          </a>
+          <a class="btn btn--ghost" href="#services">Смотреть цены</a>
+        </div>
+        <p class="status" id="open-status"><!--shop:hours_short-->Пн–Пт 10:00–21:00 · Сб–Вс 11:00–20:00<!--/shop:hours_short--></p>
+      </div>
+
+      <div class="pole" aria-hidden="true"></div>
+
+      <figure class="demo">
+        <div class="tg" role="img" aria-label="Пример записи в Telegram-боте: клиент выбирает время и получает подтверждение">
+          <div class="tg__head">
+            <span class="tg__ava" aria-hidden="true"><!--shop:bot_initial-->Б<!--/shop:bot_initial--></span>
+            <span><b><!--shop:bot_name-->Барбершоп «Кремень»<!--/shop:bot_name--></b><small>бот</small></span>
+          </div>
+          <!-- shop:demo -->
+          <div class="tg__body" data-days-off="">
+            <p class="msg">✂️ <b>Стрижка + борода</b> · 75&nbsp;мин · 3&nbsp;700&nbsp;₽<br>👤 Мастер: Артём<br>📅 <span data-demo-day>завтра</span><br><br><b>Выберите время</b></p>
+            <div class="kb" style="--kb-cols: 5" aria-hidden="true"><span>12:00</span><span>12:15</span><span class="is-on">12:30</span><span>12:45</span><span>13:00</span><span>13:15</span><span>13:30</span><span>13:45</span><span>14:00</span><span>14:15</span><span class="kb__wide">← Назад</span></div>
+            <p class="msg">✅ <b>Вы записаны!</b><br><br>✂️ Стрижка + борода · 3&nbsp;700&nbsp;₽<br>👤 Мастер: Артём<br>📅 <span data-demo-day>завтра</span>, 12:30<br>📍 Москва, ул. Мастеровая, 14<br><br>Напомню о визите за 3&nbsp;часа. Если планы изменятся, отмените запись кнопкой ниже или в разделе «Мои записи».</p>
+            <div class="kb" style="--kb-cols: 5" aria-hidden="true"><span class="kb__wide">Отменить запись</span></div>
+          </div>
+          <!-- /shop:demo -->
+          <div class="tg__input" aria-hidden="true">Сообщение</div>
+        </div>
+        <figcaption>Так выглядит запись в нашем боте: выбор времени и подтверждение</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="section" id="services" aria-labelledby="services-title">
+    <div class="wrap">
+      <div class="section__head">
+        <h2 id="services-title">Услуги и цены</h2>
+        <p><!--shop:price_policy-->Цена не зависит от мастера и не меняется после стрижки. Оплата картой, наличными или по СБП.<!--/shop:price_policy--></p>
+      </div>
+      <div class="board">
+        <ul class="board__list">
+          <!-- shop:services -->
+          <li class="svc">
+            <div class="svc__head">
+              <h3 class="svc__name">Мужская стрижка</h3>
+              <p class="svc__cost"><span class="svc__dots" aria-hidden="true"></span>2&nbsp;500&nbsp;₽</p>
+            </div>
+            <p class="svc__desc">Консультация, мытьё головы, стрижка машинкой и ножницами, укладка.</p>
+            <div class="svc__foot">
+              <span class="svc__time">45&nbsp;мин</span>
+              <a class="svc__book" href="https://t.me/ClientassBot?start=s_haircut">Записаться<span aria-hidden="true"> →</span></a>
+            </div>
+          </li>
+          <li class="svc">
+            <div class="svc__head">
+              <h3 class="svc__name">Фейд</h3>
+              <p class="svc__cost"><span class="svc__dots" aria-hidden="true"></span>2&nbsp;800&nbsp;₽</p>
+            </div>
+            <p class="svc__desc">Плавный переход от 0 мм, чёткий контур, укладка. Держит форму 3–4 недели.</p>
+            <div class="svc__foot">
+              <span class="svc__time">45&nbsp;мин</span>
+              <a class="svc__book" href="https://t.me/ClientassBot?start=s_fade">Записаться<span aria-hidden="true"> →</span></a>
+            </div>
+          </li>
+          <li class="svc">
+            <div class="svc__head">
+              <h3 class="svc__name">Моделирование бороды</h3>
+              <p class="svc__cost"><span class="svc__dots" aria-hidden="true"></span>1&nbsp;600&nbsp;₽</p>
+            </div>
+            <p class="svc__desc">Форма под тип лица, контур опасной бритвой, горячее полотенце и масло.</p>
+            <div class="svc__foot">
+              <span class="svc__time">30&nbsp;мин</span>
+              <a class="svc__book" href="https://t.me/ClientassBot?start=s_beard">Записаться<span aria-hidden="true"> →</span></a>
+            </div>
+          </li>
+          <li class="svc">
+            <div class="svc__head">
+              <h3 class="svc__name">Стрижка + борода</h3>
+              <p class="svc__cost"><span class="svc__dots" aria-hidden="true"></span>3&nbsp;700&nbsp;₽</p>
+            </div>
+            <p class="svc__desc">Мужская стрижка и моделирование бороды за один визит.</p>
+            <div class="svc__foot">
+              <span class="svc__time">75&nbsp;мин</span>
+              <span class="svc__note">выгоднее на 400 ₽</span>
+              <a class="svc__book" href="https://t.me/ClientassBot?start=s_combo">Записаться<span aria-hidden="true"> →</span></a>
+            </div>
+          </li>
+          <li class="svc">
+            <div class="svc__head">
+              <h3 class="svc__name">Королевское бритьё</h3>
+              <p class="svc__cost"><span class="svc__dots" aria-hidden="true"></span>2&nbsp;300&nbsp;₽</p>
+            </div>
+            <p class="svc__desc">Бритьё опасной бритвой с распариванием, горячими и холодными полотенцами.</p>
+            <div class="svc__foot">
+              <span class="svc__time">30&nbsp;мин</span>
+              <a class="svc__book" href="https://t.me/ClientassBot?start=s_shave">Записаться<span aria-hidden="true"> →</span></a>
+            </div>
+          </li>
+          <li class="svc">
+            <div class="svc__head">
+              <h3 class="svc__name">Детская стрижка</h3>
+              <p class="svc__cost"><span class="svc__dots" aria-hidden="true"></span>1&nbsp;900&nbsp;₽</p>
+            </div>
+            <p class="svc__desc">Для мальчиков и девочек до 12 лет: короткая стрижка, подравнивание длины, чёлка. Без спешки, с мультиками на планшете.</p>
+            <div class="svc__foot">
+              <span class="svc__time">30&nbsp;мин</span>
+              <a class="svc__book" href="https://t.me/ClientassBot?start=s_kids">Записаться<span aria-hidden="true"> →</span></a>
+            </div>
+          </li>
+          <!-- /shop:services -->
+        </ul>
+      </div>
+      <p class="board__foot">Нажмите «Записаться» у нужной услуги: бот сразу откроется на выборе мастера и времени.</p>
+    </div>
+  </section>
+
+  <section class="section" id="masters" aria-labelledby="masters-title">
+    <div class="wrap">
+      <div class="section__head">
+        <h2 id="masters-title">Мастера</h2>
+        <p>Выберите своего мастера или любого свободного. Бот покажет окна у всех, кто работает в этот день.</p>
+      </div>
+      <ul class="masters">
+        <!-- shop:masters -->
+        <li class="master">
+          <div class="master__frame"><span class="gilt" aria-hidden="true">А</span></div>
+          <div class="master__text">
+            <h3 class="master__name">Артём</h3>
+            <p class="master__role">Топ-барбер · 9&nbsp;лет</p>
+            <p class="master__about">Фейды, текстурные стрижки и классика с пробором.</p>
+            <a class="master__book" href="https://t.me/ClientassBot?start=m_artem">Записаться к мастеру<span aria-hidden="true"> →</span></a>
+          </div>
+        </li>
+        <li class="master">
+          <div class="master__frame"><span class="gilt" aria-hidden="true">Р</span></div>
+          <div class="master__text">
+            <h3 class="master__name">Руслан</h3>
+            <p class="master__role">Барбер · 6&nbsp;лет</p>
+            <p class="master__about">Борода и бритьё опасной бритвой. Подберёт форму, которую легко держать дома.</p>
+            <p class="master__facts">Выходной: понедельник</p>
+            <a class="master__book" href="https://t.me/ClientassBot?start=m_ruslan">Записаться к мастеру<span aria-hidden="true"> →</span></a>
+          </div>
+        </li>
+        <li class="master">
+          <div class="master__frame"><span class="gilt" aria-hidden="true">Н</span></div>
+          <div class="master__text">
+            <h3 class="master__name">Никита</h3>
+            <p class="master__role">Барбер · 3&nbsp;года</p>
+            <p class="master__about">Короткие стрижки и детские. Найдёт подход даже к самым непоседливым.</p>
+            <p class="master__facts">Выходной: вторник</p>
+            <p class="master__facts">Не выполняет: Королевское бритьё</p>
+            <a class="master__book" href="https://t.me/ClientassBot?start=m_nikita">Записаться к мастеру<span aria-hidden="true"> →</span></a>
+          </div>
+        </li>
+        <!-- /shop:masters -->
+      </ul>
+    </div>
+  </section>
+
+  <section class="section" id="how" aria-labelledby="how-title">
+    <div class="wrap">
+      <div class="section__head">
+        <h2 id="how-title">Как записаться</h2>
+        <p>Без звонков, регистрации и приложений. Нужен только Telegram.</p>
+      </div>
+      <ol class="steps">
+        <li>
+          <span class="steps__n gilt" aria-hidden="true">I</span>
+          <h3>Откройте бота</h3>
+          <p>Нажмите «Записаться» на сайте. Telegram откроет нашего бота, достаточно нажать «Запустить».</p>
+        </li>
+        <li>
+          <span class="steps__n gilt" aria-hidden="true">II</span>
+          <h3>Выберите время</h3>
+          <p>Услуга, мастер, день и время. Бот показывает только свободные окна на <!--shop:horizon-->14&nbsp;дней<!--/shop:horizon--> вперёд. Записаться можно не позже чем за <!--shop:lead-->1&nbsp;час<!--/shop:lead--> до начала.</p>
+        </li>
+        <li>
+          <span class="steps__n gilt" aria-hidden="true">III</span>
+          <h3>Приходите</h3>
+          <p>За <!--shop:remind-->3&nbsp;часа<!--/shop:remind--> до визита бот напомнит о записи. Отменить её можно там же, в разделе «Мои записи».</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="section" id="contacts" aria-labelledby="contacts-title">
+    <div class="wrap contacts">
+      <div>
+        <h2 id="contacts-title">Контакты</h2>
+        <p class="contacts__addr"><!--shop:city-->Москва<!--/shop:city-->, <!--shop:address-->ул. Мастеровая, 14<!--/shop:address--></p>
+        <p class="contacts__note"><!--shop:address_note-->Вход с улицы, под вывеской с барберским столбом<!--/shop:address_note--></p>
+        <a class="contacts__phone" href="tel:+79000000000"><!--shop:phone-->+7 900 000-00-00<!--/shop:phone--></a>
+        <p class="contacts__tg">Запись в Telegram: <a href="https://t.me/ClientassBot?start=site"><!--shop:bot_handle-->@ClientassBot<!--/shop:bot_handle--></a></p>
+        <div class="contacts__actions">
+          <a class="btn" href="https://t.me/ClientassBot?start=site">
+            <svg aria-hidden="true"><use href="#i-tg"/></svg>Записаться
+          </a>
+          <a class="btn btn--ghost" href="https://yandex.ru/maps/?text=%D0%9C%D0%BE%D1%81%D0%BA%D0%B2%D0%B0%2C%20%D1%83%D0%BB.%20%D0%9C%D0%B0%D1%81%D1%82%D0%B5%D1%80%D0%BE%D0%B2%D0%B0%D1%8F%2C%2014" target="_blank" rel="noopener">Открыть на карте</a>
+        </div>
+      </div>
+      <div>
+        <p class="hours-title">Часы работы</p>
+        <table class="hours" id="hours" data-tz="Europe/Moscow" data-holidays="2026-12-31 2027-01-01">
+          <tbody>
+            <!-- shop:hours -->
+            <tr data-day="1" data-open="10:00" data-close="21:00"><th scope="row">Понедельник</th><td>10:00–21:00</td></tr>
+            <tr data-day="2" data-open="10:00" data-close="21:00"><th scope="row">Вторник</th><td>10:00–21:00</td></tr>
+            <tr data-day="3" data-open="10:00" data-close="21:00"><th scope="row">Среда</th><td>10:00–21:00</td></tr>
+            <tr data-day="4" data-open="10:00" data-close="21:00"><th scope="row">Четверг</th><td>10:00–21:00</td></tr>
+            <tr data-day="5" data-open="10:00" data-close="21:00"><th scope="row">Пятница</th><td>10:00–21:00</td></tr>
+            <tr data-day="6" data-open="11:00" data-close="20:00"><th scope="row">Суббота</th><td>11:00–20:00</td></tr>
+            <tr data-day="0" data-open="11:00" data-close="20:00"><th scope="row">Воскресенье</th><td>11:00–20:00</td></tr>
+            <!-- /shop:hours -->
+          </tbody>
+        </table>
+        <!-- shop:holidays -->
+        <p class="hours-note">Не работаем: 31 декабря, 1 января</p>
+        <!-- /shop:holidays -->
+      </div>
+    </div>
+  </section>
+
+  <section class="cta" aria-label="Запись">
+    <div class="wrap cta__in">
+      <p class="cta__title">Запись открыта на <!--shop:horizon-->14&nbsp;дней<!--/shop:horizon--> вперёд</p>
+      <a class="btn" href="https://t.me/ClientassBot?start=site">
+        <svg aria-hidden="true"><use href="#i-tg"/></svg>Выбрать время в Telegram
+      </a>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="wrap foot__in">
+    <p>© <span id="year">2026</span> Барбершоп «Кремень»</p>
+    <p><!--shop:city-->Москва<!--/shop:city-->, <!--shop:address-->ул. Мастеровая, 14<!--/shop:address--> · <!--shop:phone-->+7 900 000-00-00<!--/shop:phone--></p>
+  </div>
+</footer>
+
+<div class="dock" id="dock">
+  <a class="btn" href="https://t.me/ClientassBot?start=site">
+    <svg aria-hidden="true"><use href="#i-tg"/></svg>Записаться в Telegram
+  </a>
+</div>
+
+<script>
+  (function () {
+    // «Открыто до 21:00» по времени барбершопа, а не посетителя, с учётом праздников.
+    // Дата в примере переписки — ближайший день, на который бот действительно даст записаться.
+    var table = document.getElementById("hours");
+    var status = document.getElementById("open-status");
+    if (table && window.Intl) {
+      try {
+        var parts = {};
+        new Intl.DateTimeFormat("en-US", {
+          timeZone: table.getAttribute("data-tz") || "Europe/Moscow",
+          year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hourCycle: "h23"
+        }).formatToParts(new Date()).forEach(function (p) { parts[p.type] = p.value; });
+        var base = Date.UTC(Number(parts.year), Number(parts.month) - 1, Number(parts.day));
+        var now = Number(parts.hour) * 60 + Number(parts.minute);
+        var holidays = (table.getAttribute("data-holidays") || "").split(" ");
+        var rows = {};
+        Array.prototype.forEach.call(table.querySelectorAll("tr[data-day]"), function (row) {
+          rows[row.getAttribute("data-day")] = row;
+        });
+        var dayAt = function (offset) {
+          var d = new Date(base + offset * 864e5);
+          var row = rows[d.getUTCDay()];
+          var open = holidays.indexOf(d.toISOString().slice(0, 10)) < 0 && row && row.getAttribute("data-open");
+          return { date: d, weekday: d.getUTCDay(), opens: open || null, closes: open ? row.getAttribute("data-close") : null };
+        };
+        var toMin = function (s) { var t = s.split(":"); return Number(t[0]) * 60 + Number(t[1]); };
+        var months = ["января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря"];
+        var short = ["вс", "пн", "вт", "ср", "чт", "пт", "сб"];
+
+        var today = dayAt(0);
+        if (rows[today.weekday]) rows[today.weekday].classList.add("is-today");
+        if (status) {
+          if (today.opens && now >= toMin(today.opens) && now < toMin(today.closes)) {
+            status.textContent = "Сейчас открыто, работаем до " + today.closes;
+            status.classList.add("is-open");
+          } else if (today.opens && now < toMin(today.opens)) {
+            status.textContent = "Сегодня откроемся в " + today.opens;
+          } else {
+            var names = ["в воскресенье", "в понедельник", "во вторник", "в среду", "в четверг", "в пятницу", "в субботу"];
+            for (var i = 1; i <= 14; i++) {
+              var next = dayAt(i);
+              if (next.opens) {
+                var when = i === 1 ? "завтра" : i < 7 ? names[next.weekday] : next.date.getUTCDate() + " " + months[next.date.getUTCMonth()];
+                status.textContent = "Сейчас закрыто. Откроемся " + when + " в " + next.opens;
+                break;
+              }
+            }
+          }
+        }
+
+        var demo = document.querySelector("[data-days-off]");
+        if (demo) {
+          var off = (demo.getAttribute("data-days-off") || "").split(" ");
+          for (var j = 1; j <= 14; j++) {
+            var day = dayAt(j);
+            if (day.opens && off.indexOf(String(day.weekday)) < 0) {
+              var label = short[day.weekday] + ", " + day.date.getUTCDate() + " " + months[day.date.getUTCMonth()];
+              Array.prototype.forEach.call(document.querySelectorAll("[data-demo-day]"), function (el) { el.textContent = label; });
+              break;
+            }
+          }
+        }
+      } catch (e) { /* оставляем часы работы и «завтра» из разметки */ }
+    }
+
+    // На телефоне нижняя кнопка появляется, когда кнопка первого экрана ушла из вида
+    var dock = document.getElementById("dock");
+    var heroCta = document.getElementById("hero-cta");
+    if (dock && heroCta && "IntersectionObserver" in window) {
+      new IntersectionObserver(function (entries) {
+        dock.classList.toggle("is-hidden", entries[0].isIntersecting);
+      }).observe(heroCta);
+    }
+
+    var year = document.getElementById("year");
+    if (year) year.textContent = new Date().getFullYear();
+  })();
+</script>
+</body>
+</html>

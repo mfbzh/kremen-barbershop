@@ -1,1 +1,7 @@
-# kremen-barbershop
+# Барбершоп «Кремень»
+
+Сайт барбершопа: услуги, цены, мастера, контакты. Запись через Telegram-бота [@ClientassBot](https://t.me/ClientassBot).
+
+Сайт открыт по адресу: https://mfbzh.github.io/kremen-barbershop/
+
+`index.html` собирается из данных барбершопа (`shop.json`) в рабочем репозитории командой `python build_site.py`. Править цены и услуги здесь вручную не нужно: после пересборки файл заменяется целиком.
